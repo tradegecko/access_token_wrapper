@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = AccessTokenWrapper::VERSION
   spec.authors       = ["Bradley Priest"]
   spec.email         = ["bradley@tradegecko.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{Wrapper for OAuth2::Token to automatically refresh the expiry token when expired.}
+  spec.summary       = %q{Wrapper for OAuth2::Token to automatically refresh the expiry token when expired.}
   spec.homepage      = ""
   spec.license       = "MIT"
 

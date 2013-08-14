@@ -1,6 +1,6 @@
 # AccessTokenWrapper
 
-TODO: Write a gem description
+Provides a wrapper for an OAuth2::Token to automatically refresh the expiry token when required.
 
 ## Installation
 
@@ -18,7 +18,30 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+def access_token
+  @access_token ||= begin
+    token = OAuth2::AccessToken.new(oauth_client, @user.access_token,
+            refresh_token: @user.refresh_token,
+            expires_at:    @user.expires_at
+    )
+    AccessTokenWrapper::Base.new(token) do |new_token|
+      update_client_from_access_token(new_token)
+    end
+  end
+end
+
+def oauth_client 
+  @oauth_client ||= OAuth2::Client.new(ENV["OAUTH_ID"], ENV["OAUTH_SECRET"], site: "https://api.tradegecko.com")
+end
+
+def update_user_from_access_token(new_token)
+  @user.access_token  = new_token.token
+  @user.refresh_token = new_token.refresh_token
+  @user.expires_at    = new_token.expires_at
+  @user.save
+end
+```
 
 ## Contributing
 
