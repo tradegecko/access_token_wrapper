@@ -12,9 +12,13 @@ module AccessTokenWrapper
     def method_missing(method, *args, &block)
       token.send(method, *args, &block)
     rescue OAuth2::Error => exception
-      @token = token.refresh!
-      @callback.call(token, exception)
-      token.send(method, *args, &block)
+      if exception.response.status == 404
+        raise exception
+      else
+        @token = token.refresh!
+        @callback.call(token, exception)
+        token.send(method, *args, &block)
+      end
     end
 
     def respond_to_missing?(method_name, include_private = false)
