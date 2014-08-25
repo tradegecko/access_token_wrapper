@@ -13,7 +13,7 @@ module AccessTokenWrapper
       token.send(method, *args, &block)
     rescue OAuth2::Error => exception
       @token = token.refresh!
-      @callback.call(token)
+      @callback.call(token, exception)
       token.send(method, *args, &block)
     end
 
