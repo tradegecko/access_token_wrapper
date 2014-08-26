@@ -2,6 +2,7 @@ require "access_token_wrapper/version"
 
 module AccessTokenWrapper
   class Base
+    NON_ERROR_CODES=[404, 422]
     attr_reader :token
 
     def initialize(token, &callback)
@@ -12,7 +13,7 @@ module AccessTokenWrapper
     def method_missing(method, *args, &block)
       token.send(method, *args, &block)
     rescue OAuth2::Error => exception
-      if exception.response.status == 404
+      if NON_ERROR_CODES.include?(exception.response.status)
         raise exception
       else
         @token = token.refresh!
