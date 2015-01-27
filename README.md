@@ -26,7 +26,7 @@ def access_token
             expires_at:    @user.expires_at
     )
     AccessTokenWrapper::Base.new(token) do |new_token, exception|
-      update_client_from_access_token(new_token)
+      update_user_from_access_token(new_token)
     end
   end
 end
@@ -42,6 +42,9 @@ def update_user_from_access_token(new_token)
   @user.save
 end
 ```
+
+## Note
+The `AccessTokenWrapper#token` is replaced with `AccessTokenWrapper#raw_token`
 
 ## Contributing
 
