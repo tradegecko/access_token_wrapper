@@ -2,7 +2,7 @@ require "access_token_wrapper/version"
 
 module AccessTokenWrapper
   class Base
-    NON_ERROR_CODES=[404, 422, 414]
+    NON_ERROR_CODES=[404, 422, 414, 429]
     attr_reader :raw_token
 
     def initialize(raw_token, &callback)
