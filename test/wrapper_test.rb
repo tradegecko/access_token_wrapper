@@ -72,4 +72,34 @@ class AccessTokenWrapperTest < Minitest::Test
     assert !@run
     assert !token.refreshed
   end
+
+  def test_runs_provided_lock
+    @run = false
+    lock = Module.new do
+      def self.lock
+        @prelock = true
+        yield
+        @postlock = true
+      end
+
+      def self.prelock
+        @prelock
+      end
+
+      def self.postlock
+        @postlock
+      end
+    end
+
+    token = AccessTokenWrapper::Base.new(FakeToken.new, lock: mutex) do |new_token, exception|
+      @run = true
+    end
+
+    token.get_and_raise(401)
+
+    assert @run
+    assert token.refreshed
+    assert lock.prelock
+    assert lock.postlock
+  end
 end
