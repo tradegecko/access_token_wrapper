@@ -14,10 +14,14 @@ module AccessTokenWrapper
       if NON_ERROR_CODES.include?(exception.response.status)
         raise exception
       else
-        @raw_token = @raw_token.refresh!
-        @callback.call(@raw_token, exception)
+        refresh_token!(exception)
         @raw_token.send(method_name, *args, &block)
       end
+    end
+
+    def refresh_token!(exception)
+      @raw_token = @raw_token.refresh!
+      @callback.call(@raw_token, exception)
     end
 
     def respond_to_missing?(method_name, include_private = false)
