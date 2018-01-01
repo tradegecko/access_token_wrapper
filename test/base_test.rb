@@ -1,6 +1,4 @@
-require 'minitest/autorun'
-require 'access_token_wrapper'
-require 'oauth2'
+require 'test_helper'
 
 class AccessTokenWrapperTest < Minitest::Test
   class FakeToken
@@ -29,14 +27,14 @@ class AccessTokenWrapperTest < Minitest::Test
     end
   end
 
-  def client
-    @client ||= OAuth2::Client.new('AAA', 'BBB')
+  def described_class
+    AccessTokenWrapper::Base
   end
 
   def test_doesnt_run_block_if_no_exception
     @run = false
 
-    token = AccessTokenWrapper::Base.new(FakeToken.new) do |new_token, exception|
+    token = described_class.new(FakeToken.new) do |new_token, exception|
       @run = true
     end
 
@@ -48,7 +46,7 @@ class AccessTokenWrapperTest < Minitest::Test
   def test_runs_refresh_block_if_exception
     @run = false
 
-    token = AccessTokenWrapper::Base.new(FakeToken.new) do |new_token, exception|
+    token = described_class.new(FakeToken.new) do |new_token, exception|
       @run = true
     end
 
@@ -60,7 +58,7 @@ class AccessTokenWrapperTest < Minitest::Test
   def test_doesnt_run_block_if_non_auth_exception
     @run = false
 
-    token = AccessTokenWrapper::Base.new(FakeToken.new) do |new_token, exception|
+    token = described_class.new(FakeToken.new) do |new_token, exception|
       @run = true
     end
 
