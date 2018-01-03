@@ -1,3 +1,6 @@
+## Unreleased
+- [FEATURE] Adds in AccessTokenWrapper::FromRecord as an alternative refresh wrapper that uses ActiveRecord locking to remove race-conditions
+
 ## 0.2.1 (2018-01-23)
 - [BUGFIX] Allow the request to fallback to the old style if no expires_at provided
 
