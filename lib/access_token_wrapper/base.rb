@@ -4,10 +4,26 @@ module AccessTokenWrapper
     EXPIRY_GRACE_SEC = 30
     attr_reader :raw_token
 
+    # This is the core functionality
+    #
+    # @example
+    #   AccessTokenWrapper::Base.new(token) do |new_token, exception|
+    #     update_user_from_access_token(new_token)
+    #   end
+    #
+    # @param [<OAuth2::AccessToken] raw_token An instance of an OAuth2::AccessToken object
+    # @param [&block] callback A callback that gets called when a token is refreshed,
+    #  the callback is provided `new_token` and optional `exception` parameters
+    #
+    # @return <AccessTokenWrapper::Base>
+    #
+    # @api public
     def initialize(raw_token, &callback)
       @raw_token = raw_token
       @callback  = callback
     end
+
+  private
 
     def method_missing(method_name, *args, &block)
       refresh_token! if token_expiring?
