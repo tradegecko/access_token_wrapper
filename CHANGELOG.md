@@ -1,3 +1,6 @@
+## 0.3.0 (2018-01-03)
+- [FEATURE] Adds in AccessTokenWrapper::FromRecord as a completely new tactic for wrapping API calls.
+
 ## 0.2.0 (2018-01-02)
 - [FEATURE] The library now checks the expires_at date of the token before attempting an API call.
 - [BREAKING] The refresh callback now only optionally contains an exception, when an exception is raised, if the refresh is due to the expires_at field (which should be the majority of the time) it will be `nil`
