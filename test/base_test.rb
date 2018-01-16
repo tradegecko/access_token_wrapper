@@ -4,12 +4,17 @@ class AccessTokenWrapperTest < Minitest::Test
   class FakeToken
     attr_reader :refreshed
 
-    def initialize
+    def initialize(options = {})
       @has_run = nil
+      @options = options
     end
 
     def get(*)
       ""
+    end
+
+    def expires_at
+      @options[:expires_at] || Time.now.to_i + 3600
     end
 
     def get_and_raise(code)
@@ -51,6 +56,19 @@ class AccessTokenWrapperTest < Minitest::Test
     end
 
     token.get_and_raise(401)
+    assert @run
+    assert token.refreshed
+  end
+
+
+  def test_runs_refresh_block_if_expiring
+    @run = false
+
+    token = described_class.new(FakeToken.new(expires_at: Time.now.to_i - 1)) do |new_token, exception|
+      @run = true
+    end
+
+    token.get('/')
     assert @run
     assert token.refreshed
   end
