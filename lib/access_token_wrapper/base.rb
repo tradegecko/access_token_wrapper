@@ -27,7 +27,7 @@ module AccessTokenWrapper
     end
 
     def token_expiring?
-      @raw_token.expires_at < (Time.now.to_i + EXPIRY_GRACE_SEC)
+      @raw_token.expires_at && @raw_token.expires_at < (Time.now.to_i + EXPIRY_GRACE_SEC)
     end
 
     def respond_to_missing?(method_name, include_private = false)
