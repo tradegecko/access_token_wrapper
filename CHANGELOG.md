@@ -1,4 +1,4 @@
-## 0.2.1 (Unreleased)
+## 0.2.1 (2018-01-23)
 - [BUGFIX] Allow the request to fallback to the old style if no expires_at provided
 
 ## 0.2.0 (2018-01-16)
