@@ -1,3 +1,6 @@
+## Unreleased
+- [FEATURE] Add support for a `reload_token` parameter that takes a Proc that can be used to reload a token instead of refreshing.
+
 ## 0.2.1 (2018-01-23)
 - [BUGFIX] Allow the request to fallback to the old style if no expires_at provided
 

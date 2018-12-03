@@ -4,24 +4,38 @@ module AccessTokenWrapper
     EXPIRY_GRACE_SEC = 30
     attr_reader :raw_token
 
-    def initialize(raw_token, &callback)
+    def initialize(raw_token, reload_token: nil, &callback)
       @raw_token = raw_token
       @callback  = callback
+      @reload_token = reload_token
     end
 
     def method_missing(method_name, *args, &block)
-      refresh_token! if token_expiring?
+      reload_or_refresh_token! if token_expiring?
       @raw_token.send(method_name, *args, &block)
     rescue OAuth2::Error => exception
       if NON_ERROR_CODES.include?(exception.response.status)
         raise exception
       else
-        refresh_token!(exception)
+        reload_or_refresh_token!(exception)
         @raw_token.send(method_name, *args, &block)
       end
     end
 
-    def refresh_token!(exception = nil)
+    def reload_or_refresh_token!(exception = nil)
+      if @reload_token
+        @new_token = @reload_token.call
+        if @new_token.token == @raw_token.token
+          refresh_token!(exception)
+        else
+          @raw_token = @new_token
+        end
+      else
+        refresh_token!(exception)
+      end
+    end
+
+    def refresh_token!(exception)
       @raw_token = @raw_token.refresh!
       @callback.call(@raw_token, exception)
     end
