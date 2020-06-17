@@ -29,11 +29,20 @@ module AccessTokenWrapper
       refresh_token! if token_expiring?
       @raw_token.send(method_name, *args, &block)
     rescue OAuth2::Error => exception
-      if NON_ERROR_CODES.include?(exception.response.status)
-        raise exception
+      if non_refreshable_exception?(exception)
+        raise
       else
         refresh_token!(exception)
         @raw_token.send(method_name, *args, &block)
+      end
+    end
+
+    def non_refreshable_exception?(exception)
+      case exception.response.status
+      when *NON_ERROR_CODES
+        true
+      when 400
+        response.parsed['message'] == 'Duplicate Idempotency Key header detected'
       end
     end
 
