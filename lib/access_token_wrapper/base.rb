@@ -1,7 +1,13 @@
+# frozen_string_literal: true
+
 module AccessTokenWrapper
   class Base
-    NON_ERROR_CODES = [402, 404, 422, 414, 429, 500, 503]
     EXPIRY_GRACE_SEC = 30
+
+    def config
+      AccessTokenWrapper.configuration
+    end
+
     attr_reader :raw_token
 
     # This is the core functionality
@@ -38,11 +44,10 @@ module AccessTokenWrapper
     end
 
     def non_refreshable_exception?(exception)
-      case exception.response.status
-      when *NON_ERROR_CODES
+      if config.skip_statuses.include?(exception.response.status)
         true
-      when 400
-        response.parsed['message'] == 'Duplicate Idempotency Key header detected'
+      else
+        config.skip_refresh_block.call(exception.response)
       end
     end
 

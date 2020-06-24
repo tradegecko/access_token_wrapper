@@ -59,6 +59,16 @@ def access_token
 end
 ```
 
+## Configuration
+```ruby
+AccessTokenWrapper.configure do |config|
+  config.skip_statuses << 520
+  config.skip_refresh do |response|
+    response.parsed['message'].start_with?('Duplicate Idempotency')
+  end
+end
+```
+
 ## Contributing
 
 1. Fork it
