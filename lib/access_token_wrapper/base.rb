@@ -1,7 +1,13 @@
+# frozen_string_literal: true
+
 module AccessTokenWrapper
   class Base
-    NON_ERROR_CODES = [402, 404, 422, 414, 429, 500, 503]
     EXPIRY_GRACE_SEC = 30
+
+    def config
+      AccessTokenWrapper.configuration
+    end
+
     attr_reader :raw_token
 
     # This is the core functionality
@@ -29,11 +35,19 @@ module AccessTokenWrapper
       refresh_token! if token_expiring?
       @raw_token.send(method_name, *args, &block)
     rescue OAuth2::Error => exception
-      if NON_ERROR_CODES.include?(exception.response.status)
-        raise exception
+      if non_refreshable_exception?(exception)
+        raise
       else
         refresh_token!(exception)
         @raw_token.send(method_name, *args, &block)
+      end
+    end
+
+    def non_refreshable_exception?(exception)
+      if config.skip_statuses.include?(exception.response.status)
+        true
+      else
+        config.skip_refresh_block.call(exception.response)
       end
     end
 

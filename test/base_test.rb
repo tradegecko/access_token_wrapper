@@ -60,7 +60,6 @@ class AccessTokenWrapperTest < Minitest::Test
     assert token.refreshed
   end
 
-
   def test_runs_refresh_block_if_expiring
     @run = false
 
@@ -87,5 +86,29 @@ class AccessTokenWrapperTest < Minitest::Test
 
     assert !@run
     assert !token.refreshed
+  end
+
+  def test_doesnt_run_refresh_block_with_skip_block
+    AccessTokenWrapper.configure do |config|
+      config.skip_refresh do |response|
+        true
+      end
+    end
+
+    @run = false
+
+    token = described_class.new(FakeToken.new) do |new_token, exception|
+      @run = true
+    end
+
+    begin
+      token.get_and_raise(401)
+    rescue OAuth2::Error
+    end
+
+    assert !@run
+    assert !token.refreshed
+  ensure
+    AccessTokenWrapper.reset_configuration!
   end
 end
