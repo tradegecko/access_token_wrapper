@@ -1,4 +1,4 @@
-## Unreleased
+## 0.5.0 (2020-06-25)
 - [FEATURE] Adds a basic configuration API with the ability to customize which exceptions are retried
 - [FEATURE] Adds in `AccessTokenWrapper::FromRecord` as an alternative refresh wrapper that uses ActiveRecord locking to remove race-conditions
 

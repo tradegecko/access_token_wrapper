@@ -18,6 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
+`AccessTokenWrapper::Base`
 ```ruby
 def access_token
   @access_token ||= begin
@@ -43,7 +44,7 @@ def update_user_from_access_token(new_token)
 end
 ```
 
-or 
+or the more advanced `AccessTokenWrapper::FromRecord` that automatically locks the record on refresh to help ensure concurrency.
 
 ```ruby
 def access_token
