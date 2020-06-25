@@ -43,8 +43,21 @@ def update_user_from_access_token(new_token)
 end
 ```
 
-## Note
-The `AccessTokenWrapper#token` is replaced with `AccessTokenWrapper#raw_token`
+or 
+
+```ruby
+def access_token
+  @access_token ||= begin
+    token = OAuth2::AccessToken.new(oauth_client, @user.access_token,
+            refresh_token: @user.refresh_token,
+            expires_at:    @user.expires_at
+    )
+    AccessTokenWrapper::FromRecord.new(client: oauth_client, record: @user) do |new_token, exception|
+      update_user_from_access_token(new_token)
+    end
+  end
+end
+```
 
 ## Contributing
 
